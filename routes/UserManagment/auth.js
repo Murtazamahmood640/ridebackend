@@ -11,9 +11,30 @@ const transporter = nodemailer.createTransport({
     pass: "tsdo zpys wyoc lykh",
   },});
 
+// Regular expression for password validation
+const validatePassword = (password) => {
+  const minLength = 8; // Minimum password length
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+  // Check if the password is at least 8 characters long and meets the criteria
+  if (password.length < minLength) {
+    return { valid: false, message: `Password must be at least ${minLength} characters long.` };
+  }
+  if (!passwordRegex.test(password)) {
+    return { valid: false, message: "Password must contain at least one letter, one number, and one special character." };
+  }
+  return { valid: true };
+};
+
+  
 router.post("/createuser", async (req, res) => {
   try {
     const { email, name, password, role } = req.body;
+      // Validate the password
+      const { valid, message } = validatePassword(password);
+      if (!valid) {
+        return res.status(400).json({ message });
+      }
     const hashpassword = bcrypt.hashSync(password);
     const userExists = await User.findOne({ email });
     if (userExists) {
