@@ -13,7 +13,6 @@ const userSchema = new mongoose.Schema({
     // Define the "username" field with type String and unique constraint
     name: {
         type: String,
-        unique: true, // Ensures that the username is unique across the users in the database
     },
 
     // Define the "password" field with type String and required constraint
