@@ -13,8 +13,8 @@ const vehicle = require('./routes/VehicleManagment/Vehicle')
 const allDriver = require('./routes/Driver/allDrivers')
 const driverRequest = require('./routes/Driver/driverRequest')
 const trips = require('./routes/Trips/trips')
-
 const userDriver = require('./routes/UserManagment/userDriver')
+const logsRouter  = require('./routes/Logs/LogController')
 app.use(express.json())
 app.get('/' , (req ,res) =>{
     res.send("Hello") 
@@ -28,6 +28,7 @@ app.use("/api/viaRide", vehicle)
 app.use("/api/viaRide", allDriver)
 app.use("/api/viaRide", driverRequest)
 app.use("/api/viaRide", trips)
+app.use("/api/viaRide", logsRouter )
 
 const PORT = process.env.PORT || 1000;
 app.listen(PORT, () =>{
