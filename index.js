@@ -27,8 +27,8 @@ app.get('/', (req, res) => {
   res.send("Hello");
 });
 app.use("/api/viaRide", auth);
-app.use("/api/ViaRide", userPassenger);
-app.use("/api/ViaRide", userDriver);
+app.use("/api/viaRide", userPassenger);
+app.use("/api/viaRide", userDriver);
 app.use("/api/viaRide", dispatcher);
 app.use("/api/viaRide", accountant);
 app.use("/api/viaRide", vehicle);
@@ -36,6 +36,7 @@ app.use("/api/viaRide", allDriver);
 app.use("/api/viaRide", driverRequest);
 app.use("/api/viaRide", trips);
 app.use("/api/viaRide", logsRouter);
+
 
 const PORT = process.env.PORT || 1000;
 app.listen(PORT, () => {
