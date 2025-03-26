@@ -93,4 +93,23 @@ router.post('/error', (req, res) => {
   }
 });
 
+// New Route: Get all logs
+router.get('/logs', async (req, res) => {
+  try {
+    // Fetch logs from MongoDB
+    const logs = await Log.find().sort({ createdAt: -1 });  // Sorting by createdAt in descending order to get the latest logs first
+
+    // Check if there are logs available
+    if (logs.length === 0) {
+      return res.status(404).json({ message: "No logs found" });
+    }
+
+    // Send the logs as a response
+    res.status(200).json(logs);
+  } catch (err) {
+    error(`Error fetching logs: ${err.message}`);
+    res.status(500).json({ message: "Failed to fetch logs", error: err.message });
+  }
+});
+
 module.exports = router;
