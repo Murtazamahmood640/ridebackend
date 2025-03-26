@@ -119,32 +119,34 @@ const sendEmailNotification = async (logsData) => {
   });
 };
 
-cron.schedule("0 * * * *", async () => { // Runs every hour at the start of the hour
-    try {
-      const now = new Date();
-      const oneHourAgo = new Date(now.getTime() - 1 * 60 * 60 * 1000);  // Subtract one hour from the current time
-  
-      // Log the current time and the 1-hour range for reference
-      console.log(`Cron job executed at: ${now.toISOString()}`);
-      console.log(`Searching for logs between ${oneHourAgo.toISOString()} and ${now.toISOString()}`);
-  
-      // Find logs created within the last hour
-      const logsToSend = await Log.find({ createdAt: { $gte: oneHourAgo, $lt: now } });
-  
-      if (logsToSend.length > 0) {
-        console.log(`${logsToSend.length} logs found between ${oneHourAgo.toISOString()} and ${now.toISOString()}.`);
-  
-        // Send the logs via email
-        sendEmailNotification(logsToSend);
-  
-        // After sending the email, delete the logs
-        const deletedLogs = await Log.deleteMany({ createdAt: { $gte: oneHourAgo, $lt: now } });
-        console.log(`${deletedLogs.deletedCount} logs deleted from the database.`);
-      } else {
-        console.log("No logs found in the last hour.");
-      }
-    } catch (err) {
-      console.error("Error processing logs:", err);
+
+cron.schedule("0 0 * * *", async () => { // Runs every day at midnight
+  try {
+    const now = new Date();
+    const thirtyMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000); // Subtract 5 minutes from the current time
+
+    console.log(`Cron job executed at: ${now.toISOString()}`);
+    console.log(`Searching for logs between ${thirtyMinutesAgo.toISOString()} and ${now.toISOString()}`);
+
+    // Find logs created within the last 5 minutes
+    const logsToSend = await Log.find({ createdAt: { $gte: thirtyMinutesAgo, $lt: now } });
+
+    if (logsToSend.length > 0) {
+      console.log(`${logsToSend.length} logs found between ${thirtyMinutesAgo.toISOString()} and ${now.toISOString()}.`);
+      // Send the logs via email
+      sendEmailNotification(logsToSend);
+
+      // After sending the email, delete the logs
+      const deletedLogs = await Log.deleteMany({ createdAt: { $gte: thirtyMinutesAgo, $lt: now } });
+      console.log(`${deletedLogs.deletedCount} logs deleted from the database.`);
+    } else {
+      console.log("No logs found in the last 5 minutes.");
     }
-  });
+  } catch (err) {
+    console.error("Error processing logs:", err);
+  }
+});
+
+  
+  
   

@@ -96,20 +96,30 @@ router.post('/error', (req, res) => {
 // New Route: Get all logs
 router.get('/logs', async (req, res) => {
   try {
-    // Fetch logs from MongoDB
-    const logs = await Log.find().sort({ createdAt: -1 });  // Sorting by createdAt in descending order to get the latest logs first
+    const { page = 1, limit = 10 } = req.query;  // Default to page 1 and limit 10 if not provided
+    const skip = (page - 1) * limit;
 
-    // Check if there are logs available
+    const logs = await Log.find()
+      .skip(skip)
+      .limit(Number(limit))
+      .sort({ createdAt: -1 });
+
+    const totalLogs = await Log.countDocuments();  // Get the total count of logs
+
     if (logs.length === 0) {
       return res.status(404).json({ message: "No logs found" });
     }
 
-    // Send the logs as a response
-    res.status(200).json(logs);
+    // Send the logs and total count for pagination
+    res.status(200).json({
+      logs,
+      totalLogs,  // Return totalLogs for pagination in the frontend
+    });
   } catch (err) {
     error(`Error fetching logs: ${err.message}`);
     res.status(500).json({ message: "Failed to fetch logs", error: err.message });
   }
 });
+
 
 module.exports = router;
