@@ -12,21 +12,7 @@ const logger = winston.createLogger({
         winston.format.simple()
       ),
     }),
-    new winston.transports.File({
-      filename: 'logs/combined.log',  // Path for the log file
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json()
-      ),
-    }),
-    new winston.transports.File({
-      filename: 'logs/error.log',  // Separate log file for errors
-      level: 'error',  // This will only log error messages
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json()
-      ),
-    }),
+  
   ],
 });
 
